@@ -1,0 +1,20 @@
+{
+  "name": "HAPPY BIRTHDAY PO!",
+  "short_name": "HAPPY BIRTHDAY PO!",
+  "description": "A pixel-art birthday gift for Alexis. Tap the bananaque and receive a little surprise — a message, picture, or video. Works offline once installed.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fdeaf1",
+  "theme_color": "#f9d7de",
+  "lang": "en",
+  "categories": ["lifestyle", "entertainment", "education"],
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/icons/apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any" }
+  ]
+}

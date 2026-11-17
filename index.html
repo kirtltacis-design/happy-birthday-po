@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>HAPPY BIRTHDAY PO!</title>
+  <meta name="description" content="HAPPY BIRTHDAY PO! — a pixel-art birthday gift for Alexis. Tap the bananaque and receive a little surprise: a message, picture, or video. Works offline once installed." />
+  <meta name="theme-color" content="#f9d7de" />
+
+  <!-- PWA / install metadata -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="HAPPY BIRTHDAY PO!" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="HAPPY BIRTHDAY PO!" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#bananaqueBtn">Skip to the bananaque</a>
+
+  <main class="stage" id="mainContent">
+    <h1 class="visually-hidden">HAPPY BIRTHDAY PO!</h1>
+
+    <!-- ═══════════ THE ONE AND ONLY SCREEN ═══════════ -->
+    <div class="scene-card" id="sceneCard">
+      <svg class="scene" viewBox="0 0 720 520" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Pixel-art scene: a warm pastel sky with a bright sun, drifting clouds, rolling pink and peach hills with tiny wildflowers, a flowering terracotta pot, and sampaguita blossoms.">
+        <!-- sun halo + sun -->
+        <circle class="sun-halo" cx="452" cy="92" r="78" fill="#ffd166" opacity="0.4" />
+        <g shape-rendering="crispEdges" fill="#ffd166">
+          <rect x="432" y="50" width="40" height="10"/><rect x="420" y="60" width="64" height="10"/>
+          <rect x="412" y="70" width="80" height="10"/><rect x="407" y="80" width="90" height="10"/>
+          <rect x="406" y="90" width="92" height="10"/><rect x="406" y="100" width="92" height="10"/>
+          <rect x="412" y="110" width="80" height="10"/><rect x="420" y="120" width="64" height="10"/>
+          <rect x="432" y="130" width="40" height="10"/>
+        </g>
+        <g shape-rendering="crispEdges" fill="#ffe9a8">
+          <rect x="430" y="70" width="44" height="10"/><rect x="422" y="80" width="60" height="10"/>
+          <rect x="420" y="90" width="64" height="10"/><rect x="422" y="100" width="60" height="10"/>
+          <rect x="430" y="110" width="44" height="10"/>
+        </g>
+
+        <!-- twinkles -->
+        <g shape-rendering="crispEdges" fill="#fffdf8">
+          <g class="twinkle"><rect x="180" y="80" width="6" height="18"/><rect x="174" y="86" width="18" height="6"/></g>
+          <g class="twinkle t2"><rect x="600" y="150" width="5" height="15"/><rect x="595" y="155" width="15" height="5"/></g>
+          <g class="twinkle t3"><rect x="300" y="140" width="4" height="12"/><rect x="296" y="144" width="12" height="4"/></g>
+        </g>
+
+        <!-- clouds -->
+        <g class="cloud-a" shape-rendering="crispEdges">
+          <rect x="20" y="76" width="128" height="17" fill="#fffdf8"/>
+          <rect x="38" y="62" width="30" height="14" fill="#fffdf8"/>
+          <rect x="74" y="55" width="34" height="21" fill="#fffdf8"/>
+          <rect x="112" y="63" width="26" height="13" fill="#fffdf8"/>
+          <rect x="20" y="86" width="128" height="7" fill="#f4b8c9" opacity="0.65"/>
+        </g>
+        <g class="cloud-b" shape-rendering="crispEdges">
+          <rect x="480" y="150" width="96" height="13" fill="#fffdf8"/>
+          <rect x="496" y="139" width="24" height="11" fill="#fffdf8"/>
+          <rect x="526" y="134" width="28" height="15" fill="#fffdf8"/>
+          <rect x="554" y="141" width="20" height="9" fill="#fffdf8"/>
+          <rect x="480" y="158" width="96" height="5" fill="#f4b8c9" opacity="0.65"/>
+        </g>
+
+        <!-- rolling hills (meadow) -->
+        <path shape-rendering="crispEdges" fill="#ffd3ba" d="M0,520 L0,340 h70 v-16 h55 v16 h80 v-24 h60 v24 h85 v-14 h55 v14 h95 v-22 h65 v22 h85 v-14 h55 v14 h40 V520 Z"/>
+        <path shape-rendering="crispEdges" fill="#f7b08a" opacity="0.9" d="M0,520 L0,386 h60 v-12 h70 v12 h90 v-18 h70 v18 h60 v-10 h80 v10 h70 v-16 h80 v16 h60 v-12 h55 v12 h35 V520 Z"/>
+
+        <!-- tiny wildflowers dotting the meadow -->
+        <g shape-rendering="crispEdges">
+          <rect x="158" y="428" width="4" height="12" fill="#6f4527"/><rect x="151" y="420" width="18" height="8" fill="#fffdf8"/><rect x="155" y="418" width="4" height="4" fill="#f4b942"/><rect x="163" y="418" width="4" height="4" fill="#f4b942"/>
+          <rect x="322" y="452" width="4" height="11" fill="#6f4527"/><rect x="315" y="445" width="18" height="8" fill="#ffd166"/><rect x="321" y="443" width="4" height="4" fill="#fffdf8"/>
+          <rect x="516" y="424" width="4" height="12" fill="#6f4527"/><rect x="509" y="416" width="18" height="8" fill="#fffdf8"/><rect x="515" y="414" width="4" height="4" fill="#f4b942"/><rect x="523" y="414" width="4" height="4" fill="#f4b942"/>
+          <rect x="612" y="462" width="4" height="11" fill="#6f4527"/><rect x="605" y="455" width="18" height="8" fill="#e89bb4"/><rect x="611" y="453" width="4" height="4" fill="#fffdf8"/>
+        </g>
+
+        <!-- terracotta pot with pixel flower (left) -->
+        <g shape-rendering="crispEdges">
+          <rect x="65" y="292" width="12" height="42" fill="#d64541"/>
+          <rect x="51" y="307" width="40" height="12" fill="#d64541"/>
+          <rect x="65" y="307" width="12" height="12" fill="#f4b942"/>
+          <rect x="69" y="334" width="5" height="28" fill="#6f4527"/>
+          <rect x="52" y="360" width="45" height="11" fill="#a8542f"/>
+          <rect x="57" y="371" width="35" height="24" fill="#c96f4a"/>
+          <rect x="62" y="371" width="6" height="24" fill="#e08a63" opacity="0.8"/>
+        </g>
+        <!-- little sampaguita sprig (right) -->
+        <g shape-rendering="crispEdges">
+          <rect x="640" y="342" width="7" height="24" fill="#fffdf8"/>
+          <rect x="631" y="350" width="25" height="7" fill="#fffdf8"/>
+          <rect x="640" y="350" width="7" height="7" fill="#f4b942"/>
+          <rect x="642" y="366" width="4" height="34" fill="#6f4527"/>
+        </g>
+      </svg>
+
+      <div class="ambient-layer" id="ambientLayer" aria-hidden="true"></div>
+      <div class="sparkle-layer" id="sparkleLayer" aria-hidden="true"></div>
+
+      <div class="bananaque-zone">
+        <button class="bananaque-btn" id="bananaqueBtn" aria-label="Tap the bananaque to receive a little surprise">
+          <img class="bananaque-img" src="assets/img/bananaque.png" alt="A Filipino bananaque — caramelized saba bananas glistening with glossy brown sugar" width="405" height="780" draggable="false" />
+        </button>
+        <button class="tap-instruction" id="tapInstruction">Tap the bananaque <span aria-hidden="true">♡</span></button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ═══════════ FIRST-LAUNCH PREPARATION SCREEN ═══════════ -->
+  <div class="prep-overlay" id="prepOverlay" role="dialog" aria-modal="true" aria-label="HAPPY BIRTHDAY PO! — preparing your surprises" aria-hidden="true" inert hidden>
+    <div class="prep-card" role="document">
+      <img class="prep-bananaque pixelated-off" src="assets/img/bananaque.png" alt="" aria-hidden="true" />
+      <h2 class="prep-title">HAPPY BIRTHDAY PO!</h2>
+      <p class="prep-sub" id="prepStatus">Preparing your surprises…</p>
+      <div class="prep-bar" role="progressbar" aria-label="Download progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="prepBar">
+        <div class="prep-fill" id="prepFill"></div>
+      </div>
+      <p class="prep-stats"><span id="prepDone">0</span> of <span id="prepTotal">0</span> ready</p>
+      <p class="prep-file" id="prepCurrent"></p>
+      <p class="prep-fail" id="prepFailBox" hidden>
+        <span id="prepFailCount">0</span> file(s) couldn&rsquo;t be saved yet.
+        <span class="prep-fail-list" id="prepFailList"></span>
+        <button class="prep-retry" id="prepRetryBtn" type="button">Retry</button>
+      </p>
+      <p class="prep-ready-title" id="prepReadyTitle" hidden>Ready for your birthday surprises!</p>
+      <button class="prep-enter" id="prepEnterBtn" type="button" hidden>Enter ♡</button>
+    </div>
+  </div>
+
+  <!-- ═══════════ SURPRISE CARD (overlay on the same screen) ═══════════ -->
+  <div class="surprise-overlay" id="surpriseOverlay" role="dialog" aria-modal="true" aria-label="A little surprise" aria-hidden="true" inert>
+    <div class="surprise-card" role="document">
+      <span class="surprise-tag" aria-hidden="true">A Little Surprise ♡</span>
+      <button class="surprise-close" id="surpriseCloseBtn" type="button" aria-label="Close and return to the bananaque">×</button>
+      <div class="surprise-content" id="surpriseContent"></div>
+      <button class="another-surprise" id="anotherSurpriseBtn" type="button">Another surprise ♡</button>
+    </div>
+  </div>
+
+  <script src="js/content-parser.js"></script>
+  <script src="js/surprise-picker.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
