@@ -6,7 +6,7 @@
    Bump CACHE_VERSION whenever any packaged file changes.
    ========================================================================== */
 
-var CACHE_VERSION = 'saging-v16';
+var CACHE_VERSION = 'saging-v19';
 var PRECACHE = [
   './',
   'index.html',
@@ -17,7 +17,7 @@ var PRECACHE = [
   'js/surprise-picker.js',
   'content/catalog.json',
   'content/messages/Random Messages.txt',
-  'assets/img/bananaque.png',
+  'assets/img/kamote.png',
   'assets/icons/icon-192.png',
   'assets/icons/icon-512.png',
   'assets/icons/icon-maskable-512.png',

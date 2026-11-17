@@ -7,7 +7,7 @@ A **portable, offline** Windows desktop build of the same birthday app. No insta
 - `C:\Birthday-Surprise\dist\SagingNgPagmamahal\
   - `SagingNgPagmamahal.exe` — the launcher (5.3 MB)
   - `_internal\` — the Python/WebView2 runtime (~21 MB)
-  - `app\` — the full app + all Owner content (113 MB: messages, pictures, videos, bananaque PNG)
+  - `app\` — the full app + all Owner content (113 MB: messages, pictures, videos, kamote cue photograph PNG)
 
 Total: **~140 MB**, 180 files, self-contained.
 
@@ -20,7 +20,7 @@ Total: **~140 MB**, 180 files, self-contained.
 
 1. Copy the `SagingNgPagmamahal` folder anywhere (another drive, a USB stick, the desktop).
 2. Double-click `SagingNgPagmamahal.exe`.
-3. The window opens straight onto the bananaque screen. Tap it → random message, picture, or video. Close it, or tap "Another surprise ♡".
+3. The window opens straight onto the kamote cue screen. Tap it → random message, picture, or video. Close it, or tap "Another surprise ♡".
 
 ## How to rebuild after changing content
 
@@ -41,7 +41,7 @@ Copy-Item desktop_build\app dist\SagingNgPagmamahal\app -Recurse -Force
 | Requires | Browser + (first) internet visit to cache | Just double-click, anywhere on disk |
 | Network | Only for first-ever load / media fetch | Never |
 | Look | Browser chrome optional | Native window, no browser UI |
-| Content | Same 401 messages, 81 pictures, 34 videos, bananaque PNG | Identical, embedded |
+| Content | Same 401 messages, 81 pictures, 34 videos, kamote cue photograph PNG | Identical, embedded |
 | Fallback | Service-worker cache | Direct file access via WebView2 |
 
 The desktop build embeds everything (`js/content-data.js`) and loads files directly from disk — no fetch, no network, no loading spinner. Messages parse instantly from the embedded JSON.

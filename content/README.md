@@ -13,9 +13,10 @@ content\
 │   │      ← OWNER'S PICTURES GO HERE
 │   └── videos\
 │          ← OWNER'S VIDEOS GO HERE
+├── kamote.jpg                       ← OWNER'S SUPPLIED KAMOTE CUE PHOTOGRAPH (app centerpiece)
 ├── bananaque-source\
-│      ← OWNER'S ORIGINAL BANANAQUE PICTURE GOES HERE
-└── README.md                          ← this file
+│      ← legacy (no longer used by the app)
+└── README.md                        ← this file
 ```
 
 ## Messages
@@ -56,13 +57,14 @@ Supported: **MP4 (H.264 video + AAC audio) — recommended**, **WebM**, and **MO
 - Closing the card or drawing another surprise stops the video and releases it.
 - Unsupported formats get a friendly fallback message instead of a broken player.
 
-## Bananaque picture (the big one)
+## Kamote cue picture (the big one)
 
-**Location:** `content\bananaque-source\`
+**Location:** `content\kamote.jpg` (supplied by the Owner — do not replace)
 
-Drop the Owner's original bananaque picture here (PNG or JPG, any name). Once it is
-there, it will be processed into `assets\img\bananaque.png` with the white background
-removed (transparent cut-out) and the app will show exactly that picture.
+The app shows this photograph as the main clickable image. It is processed into
+`assets\img\kamote.png` with the background removed (transparent cut-out) by
+`python tools\remove_kamote_background.py`, and the photograph itself is never
+redrawn, recolored or reshaped. Re-run that script if the photograph is ever updated.
 
 ## Offline use
 

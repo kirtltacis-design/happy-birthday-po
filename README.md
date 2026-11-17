@@ -3,9 +3,9 @@
 
 A single-screen pixel-art-meets-realistic birthday gift. No menus, no settings, no fuss:
 
-**Open the app → see the bananaque → tap it → receive a random surprise (message or picture) → close it or get another one.**
+**Open the app → see the kamote cue → tap it → receive a random surprise (message or picture) → close it or get another one.**
 
-The background is charming pixel art; the bananaque itself is a realistic food illustration.
+The background is charming pixel art; the kamote cue itself is the Owner's real photograph.
 Built with **vanilla HTML, CSS and JavaScript**. No frameworks, no build step, no accounts,
 no servers, no tracking, no external runtime dependencies.
 
@@ -17,7 +17,7 @@ no servers, no tracking, no external runtime dependencies.
 
 ```
 C:\Birthday-Surprise\
-├── index.html                 # The one and only screen (pixel-art scene + bananaque)
+├── index.html                 # The one and only screen (pixel-art scene + kamote cue)
 ├── manifest.webmanifest       # PWA manifest (installable)
 ├── sw.js                      # Service worker (offline-first precaching)
 ├── css\styles.css             # Single-screen styles (mobile-first)
@@ -30,11 +30,11 @@ C:\Birthday-Surprise\
 │   │     PUT_YOUR_MESSAGES_TXT_HERE.txt   (instructions; ignored by the app)
 │   ├── media\images\          # ← OWNER'S PICTURES GO HERE
 │   ├── media\videos\          # ← OWNER'S VIDEOS GO HERE
-│   ├── bananaque-source\      # ← OWNER'S ORIGINAL BANANAQUE PICTURE GOES HERE
+│   ├── kamote.jpg            # ← OWNER'S SUPPLIED KAMOTE CUE PHOTOGRAPH (source of truth)
 │   ├── README.md              # Where everything goes, formats, offline notes
 │   └── catalog.json           # Auto-generated index (python tools\build-catalog.py)
 ├── assets\
-│   ├── img\bananaque.png      # Bananaque artwork (replaced by Owner's processed picture)
+│   ├── img\kamote.png          # Kamote cue photograph, background removed (derived from content/kamote.jpg)
 │   ├── img\surprises\
 │   │     dev-placeholder-hearts.svg       # ⚠️ TEMPORARY placeholders — replace with real content
 │   │     dev-placeholder-bananaque.svg
@@ -45,8 +45,9 @@ C:\Birthday-Surprise\
 │   ├── generate_sprites.py  # Regenerates icons (Python 3 stdlib only)
 │   ├── make_bananaque.py    # Regenerates the development bananaque PNG (Pillow + numpy)
 │   ├── build-catalog.py     # Scans content/ and regenerates content/catalog.json
-│   └── remove_bananaque_background.py  # White-background removal for the Owner's bananaque photo
-├── tests\run-tests.js         # 141 automated checks (Node, zero dependencies)
+│   └── remove_bananaque_background.py  # White-background removal for a bananaque-style photo
+│   └── remove_kamote_background.py     # White-background removal for the Owner's kamote.jpg
+├── tests\run-tests.js         # 279 automated checks (Node, zero dependencies)
 └── README.md
 ```
 
@@ -67,7 +68,7 @@ python -m http.server 8080 --bind 127.0.0.1
 
 ## 3. How surprises work
 
-**Open → Tap → Surprise.** The bananaque (or the "Tap the bananaque ♡" button) triggers:
+**Open → Tap → Surprise.** The kamote cue (or the "TAP THIS KAMOTE CUE ♡" button) triggers:
 a wiggle animation → a sparkle burst → one randomly drawn surprise shown on the same screen.
 
 Content lives in **`content/`** — messages, pictures and videos, all mixed into one roulette:
@@ -78,7 +79,7 @@ Content lives in **`content/`** — messages, pictures and videos, all mixed int
   See `content\messages\PUT_YOUR_MESSAGES_TXT_HERE.txt` for exact examples.
 - **Pictures:** copy into `content\media\images\` — PNG, JPG/JPEG, WebP, GIF, BMP, AVIF. Shown fully, never cropped.
 - **Videos:** copy into `content\media\videos\` — MP4 (H.264/AAC, recommended) or WebM. They play only after a tap, with controls, never autoplay, and stop when the card closes.
-- **Bananaque picture:** drop the Owner's original into `content\bananaque-source\` and it becomes the app's bananaque (white background removed on processing — see `content\README.md`).
+- **Kamote cue picture:** the app uses `content\kamote.jpg`, processed into `assets\img\kamote.png` with the background removed (white background removed on processing — see `content\README.md`).
 
 **Details & guarantees:**
 
@@ -93,8 +94,8 @@ Content lives in **`content/`** — messages, pictures and videos, all mixed int
 ## 4. How the offline-first app works
 
 1. **The first visit must be online.** `sw.js` precaches the entire app shell (HTML,
-   CSS, JS, fonts, the bananaque sprite, the surprise images, icons).
-2. Afterwards everything is served from cache — bananaque taps, surprise drawing,
+   CSS, JS, fonts, the kamote cue image, the surprise images, icons).
+2. Afterwards everything is served from cache — kamote cue taps, surprise drawing,
    images, sounds. No network required.
 3. Navigations are network-first with an error-guard: if the network fails *or returns
    an error page*, the cached app is served instead.
@@ -121,7 +122,7 @@ service workers; `navigator.onLine` cannot detect a reachable-but-down origin.
 
 ## 7. Accessibility & UX notes
 
-- The bananaque and the instruction are real `<button>`s, keyboard-operable; the
+- The kamote cue and the instruction are real `<button>`s, keyboard-operable; the
   instruction triggers the same tap ritual.
 - The surprise card is a labelled `role="dialog"` with `inert` while closed, focus moved
   in on open, `Escape`/backdrop/close button to dismiss, focus returned to the trigger.
@@ -138,10 +139,10 @@ service workers; `navigator.onLine` cannot detect a reachable-but-down origin.
 node tests\run-tests.js
 ```
 
-141 checks: message parser (both formats, edge cases), 3-type picker (fairness, fallback,
+279 checks: message parser (both formats, edge cases), 3-type picker (fairness, fallback,
 exhaustion, no-repeat), content-catalog contract + placeholder exclusion, video lifecycle
 wiring, single-screen HTML (removed UI confirmed absent), CSS (reduced motion, no pixelated
-bananaque, card overflow, safe areas, video styles), service-worker precache +
+kamote cue, card overflow, safe areas, video styles), service-worker precache +
 network-first catalog + runtime content caching, manifest sanity, zero external URLs.
 
 ---

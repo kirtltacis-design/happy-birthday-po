@@ -1,6 +1,6 @@
 /* ============================================================================
    HAPPY BIRTHDAY PO! — Application logic (single-screen experience)
-   Tap the bananaque → sparkle → reveal a random surprise:
+   Tap the kamote cue → sparkle → reveal a random surprise:
    a message, a picture, or a video — 1/3 each by default.
    ========================================================================== */
 
@@ -161,24 +161,6 @@
     retryBtn: null, readyTitle: null, enterBtn: null
   };
 
-  function mimeFor(name) {
-    var e = extOf(name);
-    switch (e) {
-      case '.jpg': case '.jpeg': return 'image/jpeg';
-      case '.png': return 'image/png';
-      case '.gif': return 'image/gif';
-      case '.webp': return 'image/webp';
-      case '.avif': return 'image/avif';
-      case '.bmp': return 'image/bmp';
-      case '.mp4': return 'video/mp4';
-      case '.m4v': return 'video/mp4';
-      case '.webm': return 'video/webm';
-      case '.ogv': return 'video/ogg';
-      case '.mov': return 'video/quicktime';
-      default: return 'application/octet-stream';
-    }
-  }
-
   function loadPrepState() {
     try { return JSON.parse(localStorage.getItem(PREP_STATE_KEY) || '{}') || {}; }
     catch (e) { return {}; }
@@ -197,8 +179,10 @@
     try {
       var resp = await cache.match(url);
       if (!resp) return 0;
-      var buf = await resp.arrayBuffer().catch(function () { return null; });
-      return buf ? buf.byteLength : 0;
+      // blob() does not copy the bytes into JS memory — it is the cheap,
+      // reliable way to learn the stored size on every device, including iPhone.
+      var b = await resp.blob().catch(function () { return null; });
+      return b ? b.size : 0;
     } catch (e) { return 0; }
   }
 
@@ -222,7 +206,7 @@
     });
     if (prep.enterBtn) prep.enterBtn.addEventListener('click', function () {
       hidePrepOverlay();
-      focusBananaque();
+      focusKamote();
     });
   }
 
@@ -240,8 +224,8 @@
     prep.overlay.inert = true;
     prep.overlay.hidden = true;
   }
-  function focusBananaque() {
-    var btn = $('bananaqueBtn');
+  function focusKamote() {
+    var btn = $('kamoteBtn');
     if (btn && btn.focus) btn.focus({ preventScroll: true });
   }
   function resetPrepUI() {
@@ -264,6 +248,70 @@
       prep.failBox.hidden = false;
       prep.failCount.textContent = String(failedCount);
     }
+  }
+
+  /** fetch with an upper-bound timeout so a stalled transfer rejects instead of
+      hanging the whole preparation forever (the classic iPhone symptom). */
+  function fetchWithTimeout(url, timeoutMs) {
+    return new Promise(function (resolve, reject) {
+      var done = false;
+      var timer = null;
+      var AC = window.AbortController;
+      var ctrl = AC ? new AC() : null;
+      var finish = function (fn, value) {
+        if (done) return;
+        done = true;
+        if (timer) clearTimeout(timer);
+        fn(value);
+      };
+      timer = setTimeout(function () {
+        if (ctrl) { try { ctrl.abort(); } catch (e) { /* older engines */ } }
+        finish(reject, new Error('timed out after ' + timeoutMs + 'ms'));
+      }, timeoutMs);
+      var opts = { cache: 'default' };
+      if (ctrl) opts.signal = ctrl.signal;
+      fetch(url, opts).then(function (r) { finish(resolve, r); }, function (err) { finish(reject, err); });
+    });
+  }
+
+  /** Stream one file straight from the network into the Cache API.
+      No intermediate arrayBuffer copy; verifies the STORED size against the
+      network Content-Length (or the stored blob size) before accepting it. */
+  function downloadOne(cache, url) {
+    return fetchWithTimeout(url, 60000).then(function (response) {
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      var expected = parseInt(response.headers.get('content-length') || '0', 10) || 0;
+      // Stream the response body directly into the Cache API — no JS memory copy.
+      return cache.put(url, response).then(function () {
+        return cache.match(url).then(function (stored) {
+          return blobSize(stored).then(function (got) {
+            if (got <= 0) throw new Error('stored 0 bytes');
+            if (expected > 0 && got !== expected) {
+              throw new Error('size mismatch: stored ' + got + ' vs expected ' + expected);
+            }
+            return got;
+          });
+        });
+      });
+    });
+  }
+  function blobSize(resp) {
+    if (!resp) return Promise.resolve(0);
+    return resp.blob().then(function (b) { return b ? b.size : 0; }, function () { return 0; });
+  }
+
+  /** Download one file with limited retries; rejects after the last attempt. */
+  async function downloadWithRetry(cache, url, attempts) {
+    var lastErr = null;
+    for (var attempt = 1; attempt <= attempts; attempt++) {
+      try { return await downloadOne(cache, url); }
+      catch (err) {
+        lastErr = err;
+        console.warn('[HAPPY BIRTHDAY PO!] prep attempt ' + attempt + '/' + attempts + ' failed:', url, err && err.message);
+        if (attempt < attempts) await new Promise(function (r) { setTimeout(r, 800 * attempt); });
+      }
+    }
+    throw lastErr || new Error('download failed');
   }
 
   /** Returns true if every catalogued media file is present in the media cache. */
@@ -300,44 +348,47 @@
       if (existing > 0) { saved[f] = { b: existing, at: Date.now() }; done++; updatePrepUI(done, total, '', 0); }
     }
 
-    // pass 2: download missing/failed
+    // pass 2: download missing/failed — small concurrency pool, per-file retries,
+    // sequential cache writes are unnecessary; every file is verified in the Cache API.
     var quotaHit = false;
+    var todo = [];
     for (var j = 0; j < files.length; j++) {
       var url = files[j];
       var have = await cachedFileSize(cache, url);
       if (have > 0) continue;
-      try {
-        var response = await fetch(url, { cache: 'no-store' });
-        if (!response.ok) throw new Error('HTTP ' + response.status);
-        var buffer = await response.arrayBuffer();
-        if (!buffer || buffer.byteLength === 0) throw new Error('empty body');
+      todo.push(url);
+    }
 
-        var entry = new Response(buffer, { status: 200, headers: { 'Content-Type': mimeFor(url) } });
-        try {
-          await cache.put(url, entry);
-        } catch (quotaErr) {
-          quotaHit = true;
-          failed.push(url);
-          buffer = null;
-          break;
-        }
-        var check = await cache.match(url);
-        var storedSize = check ? (await check.arrayBuffer().catch(function () { return null; })) : null;
-        if (!storedSize || storedSize.byteLength !== buffer.byteLength) {
-          failed.push(url);
-        } else {
-          saved[url] = { b: buffer.byteLength, at: Date.now() };
-          done++;
-        }
-        buffer = null;
-        savePrepState(saved);
-        updatePrepUI(done, total, url.split('/').pop(), failed.length);
-      } catch (err) {
-        console.warn('[HAPPY BIRTHDAY PO!] prep failed:', url, err && err.message);
-        failed.push(url);
-        savePrepState(saved);
-        updatePrepUI(done, total, url.split('/').pop(), failed.length);
-      }
+    var CONCURRENCY = 4;
+    var cursor = 0;
+    var workers = [];
+    for (var w = 0; w < CONCURRENCY; w++) {
+      workers.push((function () {
+        return (async function () {
+          while (true) {
+            if (quotaHit) return;
+            var idx = cursor;
+            cursor++;
+            if (idx >= todo.length) return;
+            var url = todo[idx];
+            try {
+              var got = await downloadWithRetry(cache, url, 3);
+              saved[url] = { b: got, at: Date.now() };
+              done++;
+            } catch (err) {
+              var isQuota = err && /quota|not enough|exceeded/i.test(String(err.message || err));
+              if (isQuota) { quotaHit = true; failed.push(url); }
+              else failed.push(url);
+            }
+            savePrepState(saved);
+            updatePrepUI(done, total, url.split('/').pop(), failed.length);
+          }
+        })();
+      })());
+    }
+    await Promise.all(workers);
+    if (quotaHit) {
+      for (var k = cursor; k < todo.length; k++) failed.push(todo[k]);
     }
 
     state.failedFiles = failed;
@@ -375,7 +426,7 @@
     prep.current.textContent = '';
     prep.fill.style.width = '100%';
     prep.bar.setAttribute('aria-valuenow', '100');
-    window.setTimeout(function () { hidePrepOverlay(); focusBananaque(); }, 900);
+    window.setTimeout(function () { hidePrepOverlay(); focusKamote(); }, 900);
   }
 
   function setMediaReady() {
@@ -573,7 +624,7 @@
         emptyBox.appendChild(el('p', 'surprise-empty-sub', 'Just a tiny moment.'));
       } else {
         emptyBox.appendChild(el('p', 'surprise-message', 'The surprises are still being prepared with love.'));
-        emptyBox.appendChild(el('p', 'surprise-empty-sub', 'Please come back soon — and in the meantime, enjoy the bananaque.'));
+        emptyBox.appendChild(el('p', 'surprise-empty-sub', 'Please come back soon — and in the meantime, enjoy the kamote cue.'));
       }
       contentNode.appendChild(emptyBox);
       return;
@@ -633,7 +684,7 @@
   }
 
   function openSurprise(trigger) {
-    lastTrigger = trigger || $('bananaqueBtn');
+    lastTrigger = trigger || $('kamoteBtn');
     overlay.classList.add('is-open');
     overlay.setAttribute('aria-hidden', 'false');
     overlay.inert = false;
@@ -646,7 +697,7 @@
     overlay.setAttribute('aria-hidden', 'true');
     overlay.inert = true;
     document.body.style.overflow = '';
-    var target = lastTrigger || $('bananaqueBtn');
+    var target = lastTrigger || $('kamoteBtn');
     if (target && target.focus) target.focus({ preventScroll: true });
     playSound('click');
   }
@@ -659,9 +710,9 @@
     if (navigator.vibrate) { try { navigator.vibrate(isRefresh ? 10 : 18); } catch (e) { /* unsupported */ } }
   }
 
-  /* ---------------- bananaque tap ---------------- */
+  /* ---------------- kamote cue tap ---------------- */
   function celebrateAndDraw(originButton, lx, ly) {
-    var btn = $('bananaqueBtn');
+    var btn = $('kamoteBtn');
     if (!state.mediaReady) { showPreparationNeeded(); return; }
     var rect = $('sceneCard').getBoundingClientRect();
 
@@ -680,18 +731,18 @@
     drawAndShow(false, originButton);
   }
 
-  function onBananaqueTap(event) {
+  function onKamoteTap(event) {
     var rect = $('sceneCard').getBoundingClientRect();
     var clientX = (event && typeof event.clientX === 'number') ? event.clientX : rect.left + rect.width / 2;
     var clientY = (event && typeof event.clientY === 'number') ? event.clientY : rect.top + rect.height * 0.38;
-    celebrateAndDraw(event.currentTarget || $('bananaqueBtn'), clientX - rect.left, clientY - rect.top);
+    celebrateAndDraw(event.currentTarget || $('kamoteBtn'), clientX - rect.left, clientY - rect.top);
   }
 
   /* ---------------- wire up ---------------- */
   function init() {
     loadContent(); // async, non-blocking; card handles the rare "not ready / empty" case
 
-    $('bananaqueBtn').addEventListener('click', onBananaqueTap);
+    $('kamoteBtn').addEventListener('click', onKamoteTap);
     $('tapInstruction').addEventListener('click', function () { celebrateAndDraw($('tapInstruction')); });
 
     closeBtn.addEventListener('click', closeSurprise);

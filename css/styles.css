@@ -57,7 +57,7 @@
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-.btn, .bananaque-btn, .tap-instruction, .another-surprise, .surprise-close { touch-action: manipulation; }
+.btn, .kamote-btn, .tap-instruction, .another-surprise, .surprise-close { touch-action: manipulation; }
 
 html, body { height: 100%; }
 
@@ -132,8 +132,8 @@ body {
 .twinkle.t3 { animation-delay: 1.6s; }
 @keyframes twinkle { 0%,100% { opacity: 0.15; } 50% { opacity: 1; } }
 
-/* ============ Bananaque zone ============ */
-.bananaque-zone {
+/* ============ Kamote cue zone ============ */
+.kamote-zone {
   position: absolute; left: 50%; top: 46%;
   transform: translate(-50%, -46%);
   display: flex; flex-direction: column; align-items: center;
@@ -141,27 +141,27 @@ body {
   z-index: 5; width: max-content; max-width: 94%;
 }
 
-.bananaque-btn {
+.kamote-btn {
   background: none; border: none; padding: 0.4rem; margin: 0;
   cursor: pointer; border-radius: 34%;
   transition: filter 0.2s ease;
 }
-.bananaque-img {
+.kamote-img {
   height: clamp(180px, 44vh, 340px);
   max-width: min(52vw, 260px);
   width: auto; display: block;
   filter: drop-shadow(0 16px 16px rgba(74,44,26,0.35));
   transition: transform 0.18s ease;
 }
-.bananaque-btn:hover .bananaque-img { transform: translateY(-8px) scale(1.03); }
-.bananaque-btn:focus-visible { outline-offset: 8px; }
+.kamote-btn:hover .kamote-img { transform: translateY(-8px) scale(1.03); }
+.kamote-btn:focus-visible { outline-offset: 8px; }
 
 @media (min-width: 940px) {
-  .bananaque-img { height: clamp(260px, 56vh, 420px); max-width: min(30vw, 300px); }
+  .kamote-img { height: clamp(260px, 56vh, 420px); max-width: min(30vw, 300px); }
 }
 
-.bananaque-btn.is-wiggling .bananaque-img { animation: bananaqueWiggle 0.7s cubic-bezier(0.36, 1.7, 0.5, 1) both; }
-@keyframes bananaqueWiggle {
+.kamote-btn.is-wiggling .kamote-img { animation: kamoteWiggle 0.7s cubic-bezier(0.36, 1.7, 0.5, 1) both; }
+@keyframes kamoteWiggle {
   0%   { transform: rotate(0deg) scale(1); }
   18%  { transform: rotate(-9deg) scale(1.12) translateY(-14px); }
   36%  { transform: rotate(8deg) scale(0.96, 1.06); }
@@ -331,7 +331,7 @@ body {
   display: flex; flex-direction: column; align-items: center; text-align: center;
   gap: 0.6rem; width: 100%; max-width: 430px;
 }
-.prep-bananaque {
+.prep-kamote {
   width: clamp(120px, 36vh, 220px); height: auto;
   filter: drop-shadow(0 14px 12px rgba(74,44,26,0.35));
   animation: prepFloat 2.4s ease-in-out infinite;
