@@ -6,7 +6,7 @@
    Bump CACHE_VERSION whenever any packaged file changes.
    ========================================================================== */
 
-var CACHE_VERSION = 'saging-v19';
+var CACHE_VERSION = 'saging-v20';
 var PRECACHE = [
   './',
   'index.html',

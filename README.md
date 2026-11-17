@@ -78,14 +78,14 @@ Content lives in **`content/`** — messages, pictures and videos, all mixed int
   lists OK — numbering/bullets are stripped). Wording, emojis and punctuation are preserved.
   See `content\messages\PUT_YOUR_MESSAGES_TXT_HERE.txt` for exact examples.
 - **Pictures:** copy into `content\media\images\` — PNG, JPG/JPEG, WebP, GIF, BMP, AVIF. Shown fully, never cropped.
-- **Videos:** copy into `content\media\videos\` — MP4 (H.264/AAC, recommended) or WebM. They play only after a tap, with controls, never autoplay, and stop when the card closes.
+- **Videos:** copy into `content\media\videos\` - MP4 (H.264/AAC, recommended) or WebM. They play only after a tap, with controls, never autoplay, and stop when the card closes. The next video candidate streams in the background as a hidden, preloaded element so playback can start instantly when a video surprise is drawn — without storing the whole collection on-device.
 - **Kamote cue picture:** the app uses `content\kamote.jpg`, processed into `assets\img\kamote.png` with the background removed (white background removed on processing — see `content\README.md`).
 
 **Details & guarantees:**
 
 - A **balanced roulette** — default ⅓ chance each of message / picture / video (configurable via `window.SURPRISE_WEIGHTS` in `js/app.js`; no settings screen). A type with zero entries donates its share to the remaining types.
 - **No immediate repeats** while an alternative exists, and per-type **exhaust-then-reset** cycling so entries are seen before repeats happen.
-- **Offline:** everything above is cached by the service worker after its first online fetch. Very large videos are cached on demand rather than force-precached (storage-aware).
+- **Offline:** messages and pictures are cached by the service worker after their first online fetch (the first-launch preparation verifies them). Videos are streamed on demand: only the *next* video candidate is buffered in a hidden element, and it plays from the browser's temporary media buffer — the full video collection is never downloaded or permanently stored at launch (iPhone storage).
 - **Console diagnostics:** the app logs exactly how many of each type it found (`[HAPPY BIRTHDAY PO!] content (catalog): 45 messages · 12 pictures · 3 videos`).
 - The Owner never touches code: copy files into the folder, reload once (with internet the first time a new file is fetched), done. `python tools\build-catalog.py` regenerates `content\catalog.json` if you want to force a refresh.
 
@@ -93,8 +93,10 @@ Content lives in **`content/`** — messages, pictures and videos, all mixed int
 
 ## 4. How the offline-first app works
 
-1. **The first visit must be online.** `sw.js` precaches the entire app shell (HTML,
-   CSS, JS, fonts, the kamote cue image, the surprise images, icons).
+1. **The first visit must be online.** `sw.js` precaches the app shell (HTML,
+   CSS, JS, fonts, the kamote cue image, icons). The first-launch preparation verifies
+   every picture into the media cache, and the next video candidate buffers in the
+   background — nothing else is downloaded.
 2. Afterwards everything is served from cache — kamote cue taps, surprise drawing,
    images, sounds. No network required.
 3. Navigations are network-first with an error-guard: if the network fails *or returns

@@ -295,6 +295,18 @@ body {
   border: 3px solid var(--caramel-dark); border-radius: var(--radius-md);
   background: #1a120c; box-shadow: 0 6px 18px rgba(74,44,26,0.3);
 }
+/* hidden element used to buffer the next video surprise — never visible */
+.video-preroll {
+  position: absolute; left: -9999px; top: -9999px;
+  width: 64px; height: 64px; opacity: 0;
+  pointer-events: none;
+}
+.surprise-buffering {
+  display: inline-block; margin-top: 0.6rem; font-weight: 800;
+  font-size: 0.85rem; color: var(--caramel-dark); opacity: 0.85;
+  animation: bufferingPulse 1.1s ease-in-out infinite;
+}
+@keyframes bufferingPulse { 0%,100% { opacity: 0.45; } 50% { opacity: 1; } }
 .surprise-empty-sub { font-size: 0.9rem; font-weight: 600; color: var(--caramel); margin: 0; }
 
 .surprise-content.refresh { animation: surpriseIn 0.38s cubic-bezier(0.34, 1.4, 0.5, 1) both; }

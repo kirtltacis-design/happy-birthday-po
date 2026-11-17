@@ -103,20 +103,35 @@
       return picked;
     }
 
-    /** Draw one surprise. Returns the entry, or null when the pool is empty. */
-    function pick() {
+    /** Announce the type the next pick() would choose, without consuming it. */
+    function chooseType() {
+      var entries = getEntries().filter(isValidEntry);
+      var available = availableTypes(entries);
+      return pickType(available);
+    }
+
+    /** Draw one surprise. Returns the entry, or null when the pool is empty.
+        Optionally forces the type (used for pre-armed video candidates). */
+    function pick(forcedType) {
       var entries = getEntries().filter(isValidEntry);
       if (entries.length === 0) return null;
 
       var available = availableTypes(entries);
       if (available.length === 0) return null;
 
-      var type = pickType(available);
+      var type = (typeof forcedType === 'string' && TYPES.indexOf(forcedType) !== -1) ? forcedType : pickType(available);
       if (!type) return null;
 
       var previousLast = lastId;
       var picked = drawFromType(type, entries);
-      if (!picked) return null;
+      if (!picked) {
+        if (typeof forcedType === 'string') {
+          // Forced type came up empty — fall back to the normal roulette.
+          var fallbackType = pickType(available);
+          picked = fallbackType ? drawFromType(fallbackType, entries) : null;
+        }
+        if (!picked) return null;
+      }
 
       // Global no-immediate-repeat across ALL types (belt & braces).
       if (previousLast !== null && picked.id === previousLast && entries.length > 1) {
@@ -139,7 +154,7 @@
       lastId = null;
     }
 
-    return { pick: pick, reset: reset };
+    return { pick: pick, chooseType: chooseType, reset: reset };
   }
 
   var api = { createPicker: createPicker, isValidEntry: isValidEntry, TYPES: TYPES };
